@@ -60,6 +60,8 @@ def infer_github_pages_url(remote_url: str) -> str:
             "git remote origin から GitHub Pages URL を推定できませんでした。"
         )
     owner, repo = parsed
+    if repo.lower() == f"{owner.lower()}.github.io":
+        return f"https://{owner}.github.io/"
     return f"https://{owner}.github.io/{repo}/"
 
 

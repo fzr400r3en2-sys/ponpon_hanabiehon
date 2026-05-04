@@ -36,6 +36,22 @@ https://fzr400r3en2-sys.github.io/ponpon_hanabiehon/
 assets/install/install.html
 ```
 
+## 仮想環境の作成と有効化
+
+```text
+Windows PowerShell:
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+macOS:
+python3 -m venv .venv
+source .venv/bin/activate
+
+Linux:
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
 ## 開発用パッケージのインストール
 
 アイコンPNG生成とQRコード生成には開発用Pythonパッケージを使います。
@@ -56,6 +72,8 @@ python tools/generate_app_icons.py
 - `assets/icons/icon-180.png`
 - `assets/icons/icon-192.png`
 - `assets/icons/icon-512.png`
+- `assets/icons/icon-maskable-192.png`
+- `assets/icons/icon-maskable-512.png`
 
 ## QRコード生成
 
@@ -116,6 +134,7 @@ python tools/generate_install_qr.py
 - localhost または HTTPS の公開URLで確認してください。
 - GitHub Pages公開後にスマホで確認してください。
 - Service Worker更新時はブラウザキャッシュの影響に注意してください。
+- アイコンや App Shell のファイルを変更したら、`sw.js` の `CACHE_NAME` を `vN` → `v(N+1)` のように上げてください。
 
 ## 安全方針
 

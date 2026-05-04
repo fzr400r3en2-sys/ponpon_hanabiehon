@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ICON_DIR = ROOT / "assets" / "icons"
 SVG_PATH = ICON_DIR / "icon.svg"
 PNG_SIZES = (180, 192, 512)
+MASKABLE_PNG_SIZES = (192, 512)
 
 
 def write_svg() -> None:
@@ -82,7 +83,7 @@ def draw_gradient(draw: ImageDraw.ImageDraw, size: int) -> None:
         draw.line([(0, y), (size, y)], fill=color)
 
 
-def draw_firework(draw: ImageDraw.ImageDraw, scale: float) -> None:
+def draw_firework(draw: ImageDraw.ImageDraw, scale: float, content_scale: float = 1.0) -> None:
     cx = cy = 256 * scale
     rays = [
         ((0, -126), "#fff2a8", 18),
@@ -99,20 +100,29 @@ def draw_firework(draw: ImageDraw.ImageDraw, scale: float) -> None:
         ((44, 118), "#b9e8ff", 14),
     ]
     for (dx, dy), color, width in rays:
-        start_x = cx + dx * 0.36 * scale
-        start_y = cy + dy * 0.36 * scale
-        end_x = cx + dx * scale
-        end_y = cy + dy * scale
-        draw.line((start_x, start_y, end_x, end_y), fill=color, width=round(width * scale))
+        start_x = cx + dx * 0.36 * scale * content_scale
+        start_y = cy + dy * 0.36 * scale * content_scale
+        end_x = cx + dx * scale * content_scale
+        end_y = cy + dy * scale * content_scale
+        draw.line(
+            (start_x, start_y, end_x, end_y),
+            fill=color,
+            width=round(width * scale * content_scale),
+        )
 
-    center = 34 * scale
+    center = 34 * scale * content_scale
     draw.ellipse((cx - center, cy - center, cx + center, cy + center), fill="#fff7dc")
 
 
-def render_png(size: int) -> None:
+def scaled_coordinate(value: float, content_scale: float) -> float:
+    return 256 + (value - 256) * content_scale
+
+
+def render_png(size: int, maskable: bool = False) -> None:
     scale_factor = 4
     work_size = size * scale_factor
     scale = work_size / 512
+    content_scale = 0.8 if maskable else 1.0
     radius = round(112 * scale)
     image = Image.new("RGBA", (work_size, work_size), (0, 0, 0, 0))
     gradient = Image.new("RGBA", (work_size, work_size), (0, 0, 0, 0))
@@ -126,17 +136,18 @@ def render_png(size: int) -> None:
 
     glow = Image.new("RGBA", (work_size, work_size), (0, 0, 0, 0))
     glow_draw = ImageDraw.Draw(glow)
+    glow_center_y = scaled_coordinate(512 * 0.42, content_scale) * scale
     for i in range(46, 0, -1):
         alpha = int(3.2 * i)
-        r = i * 4.2 * scale
+        r = i * 4.2 * scale * content_scale
         glow_draw.ellipse(
-            (work_size / 2 - r, work_size * 0.42 - r, work_size / 2 + r, work_size * 0.42 + r),
+            (work_size / 2 - r, glow_center_y - r, work_size / 2 + r, glow_center_y + r),
             fill=(255, 247, 200, min(alpha, 145)),
         )
     image.alpha_composite(glow)
 
     icon_draw = ImageDraw.Draw(image)
-    draw_firework(icon_draw, scale)
+    draw_firework(icon_draw, scale, content_scale)
     dots = [
         (146, 132, 18, "#b7f3ef"),
         (376, 128, 14, "#f8f0ff"),
@@ -145,22 +156,35 @@ def render_png(size: int) -> None:
         (250, 408, 12, "#fff2a8"),
     ]
     for x, y, r, color in dots:
+        dot_x = scaled_coordinate(x, content_scale)
+        dot_y = scaled_coordinate(y, content_scale)
+        dot_r = r * content_scale
         icon_draw.ellipse(
-            ((x - r) * scale, (y - r) * scale, (x + r) * scale, (y + r) * scale),
+            (
+                (dot_x - dot_r) * scale,
+                (dot_y - dot_r) * scale,
+                (dot_x + dot_r) * scale,
+                (dot_y + dot_r) * scale,
+            ),
             fill=color,
         )
 
     image = image.resize((size, size), Image.Resampling.LANCZOS)
-    image.save(ICON_DIR / f"icon-{size}.png")
+    prefix = "icon-maskable" if maskable else "icon"
+    image.save(ICON_DIR / f"{prefix}-{size}.png")
 
 
 def main() -> None:
     write_svg()
     for size in PNG_SIZES:
         render_png(size)
+    for size in MASKABLE_PNG_SIZES:
+        render_png(size, maskable=True)
     print(f"generated: {SVG_PATH.relative_to(ROOT)}")
     for size in PNG_SIZES:
         print(f"generated: assets/icons/icon-{size}.png")
+    for size in MASKABLE_PNG_SIZES:
+        print(f"generated: assets/icons/icon-maskable-{size}.png")
 
 
 if __name__ == "__main__":
