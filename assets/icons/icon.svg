@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ぽんぽん花火">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#273c75"/>
+      <stop offset="0.58" stop-color="#4c74b8"/>
+      <stop offset="1" stop-color="#f1b8bd"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="38%" r="52%">
+      <stop offset="0" stop-color="#fff7c8" stop-opacity="0.85"/>
+      <stop offset="0.55" stop-color="#ffd1dc" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#sky)"/>
+  <circle cx="256" cy="208" r="196" fill="url(#glow)"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <g stroke="#fff2a8" stroke-width="18">
+      <path d="M256 118v76"/>
+      <path d="M256 322v72"/>
+      <path d="M142 256h74"/>
+      <path d="M296 256h74"/>
+    </g>
+    <g stroke="#ffd1dc" stroke-width="16">
+      <path d="M176 176l54 54"/>
+      <path d="M282 282l54 54"/>
+      <path d="M336 176l-54 54"/>
+      <path d="M230 282l-54 54"/>
+    </g>
+    <g stroke="#b9e8ff" stroke-width="14">
+      <path d="M214 138l18 66"/>
+      <path d="M298 138l-18 66"/>
+      <path d="M214 374l18-66"/>
+      <path d="M298 374l-18-66"/>
+    </g>
+  </g>
+  <circle cx="256" cy="256" r="34" fill="#fff7dc"/>
+  <circle cx="146" cy="132" r="18" fill="#b7f3ef"/>
+  <circle cx="376" cy="128" r="14" fill="#f8f0ff"/>
+  <circle cx="120" cy="358" r="16" fill="#c8f7d0"/>
+  <circle cx="392" cy="354" r="20" fill="#ffc89f"/>
+</svg>
